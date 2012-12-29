@@ -6,37 +6,13 @@
 //*****************************************************************************
 #define SYSTICKS_PER_SECOND     100
 
-//*****************************************************************************
-//
-// The size of the memory transfer source and destination buffers (in words).
-//
-//*****************************************************************************
-#define MEM_BUFFER_SIZE 256        
-
-//*****************************************************************************
-//
-// The size of the UART transmit and receive buffers.  They do not need to be
-// the same size.
-//
-//*****************************************************************************
-#define UART_TXBUF_SIZE         256
-#define UART_RXBUF_SIZE         256
 
 
 
-#define TEST_TIME		120
+#define TEST_TIME		3
+#define TEST_LOOPS		6
 
-
-//*****************************************************************************
-//
-// The source and destination buffers used for memory transfers.
-//
-//*****************************************************************************
-static unsigned long g_ulSrcBuf[MEM_BUFFER_SIZE];
-static unsigned long g_ulDstBuf[MEM_BUFFER_SIZE];
-
-
-
+#define APP_INPUT_BUF_SIZE               128
 
 //*****************************************************************************
 //
@@ -46,13 +22,6 @@ static unsigned long g_ulDstBuf[MEM_BUFFER_SIZE];
 //*****************************************************************************
 static unsigned long g_uluDMAErrCount = 0;
 
-//*****************************************************************************
-//
-// The count of times the uDMA interrupt occurred but the uDMA transfer was not
-// complete.  This should remain 0.
-//
-//*****************************************************************************
-static unsigned long g_ulBadISR = 0;
 
 //*****************************************************************************
 //
@@ -85,7 +54,31 @@ static unsigned long g_ulCPUUsage;
 //*****************************************************************************
 static unsigned long g_ulSeconds = 0;
 
-
+// Dummy buffer for Rx from SSI
 unsigned short g_uiSsiRxBuf[SSI_RXBUF_SIZE];
-unsigned short *g_uiSsiTxBufBase;//=g_uiPixelData[0];
-unsigned short *g_uiSsiTxBufB;//=g_uiPixelData[SSI_TXBUF_SIZE];
+
+//pointer for Base address for SSI Transfers.
+unsigned short *g_uiSsiTxBufBase;
+// Base A and Base B are the base address in the Framebuffers
+unsigned short *g_uiSsiTxBufBaseA;
+unsigned short *g_uiSsiTxBufBaseB;
+
+
+// Flag to exit program
+unsigned char g_ucExit =0;
+
+
+//*****************************************************************************
+//
+// Define two 1BPP offscreen buffers and display structures.  ]
+//
+//*****************************************************************************
+#define OFFSCREEN_BUF_SIZE GrOffScreen1BPPSize(320, 240)
+unsigned char g_pucOffscreenBufA[OFFSCREEN_BUF_SIZE+1];
+unsigned char g_pucOffscreenBufB[OFFSCREEN_BUF_SIZE+1];
+tDisplay g_sOffscreenDisplayA;
+tDisplay g_sOffscreenDisplayB;
+// Context for Active Display
+tContext sDisplayContext;
+
+

@@ -13,6 +13,7 @@
 #include "driverlib/uart.h"
 #include "driverlib/ssi.h"
 #include "driverlib/udma.h"
+#include "grlib/grlib.h"
 #include "utils/cpu_usage.h"
 #include "utils/uartstdio.h"
 #include "utils/ustdlib.h"

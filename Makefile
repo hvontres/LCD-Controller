@@ -5,13 +5,14 @@ TARGET      = udma_demo
 # List all the source files here
 SOURCES    += src/main.c
 SOURCES    += src/spi_xfer.c
-#SOURCES	   += src/udma_demo.c
+SOURCES	   += src/commands.c
 SOURCES    += src/stellariscommon.c
 SOURCES    += src/startup.c
 SOURCES    += src/syscalls.c
 SOURCES    += cpu_usage.c
 SOURCES	   += uartstdio.c
 SOURCES	   += ustdlib.c
+SOURCES	   += cmdline.c
 
 
 #SOURCES  = $(wildcard src/*.c)
@@ -63,6 +64,7 @@ CFLAGS     += -Dgcc
 CFLAGS     += -DTARGET_IS_BLIZZARD_RA1
 CFLAGS     += -fsingle-precision-constant
 CFLAGS     += -I$(SW_DIR) $(INCLUDES)
+CFLAGS	   += -DUART_BUFFERED
 
 ifeq ($(FPU),hard)
 	LIBGCC  = $(TOOL)/lib/gcc/arm-none-eabi/4.6.2/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libgcc.a
@@ -76,7 +78,9 @@ else
 	DRIVER_LIB	= $(SW_DIR)/driverlib/gcc-cm4f/libdriver-cm4f.a
 endif
 
-LIBS        = '$(LIBM)' '$(LIBC)' '$(LIBGCC)' '$(DRIVER_LIB)'
+GR_LIB	    = $(SW_DIR)/grlib/gcc-cm4f/libgr-cm4f.a
+
+LIBS        = '$(LIBM)' '$(LIBC)' '$(LIBGCC)' '$(DRIVER_LIB)' '$(GR_LIB)' 
 
 LDFLAGS    += -T $(LD_SCRIPT)
 LDFLAGS    += --entry ResetISR

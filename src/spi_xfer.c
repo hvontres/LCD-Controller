@@ -322,3 +322,28 @@ InitSSI2Transfer(void)
     ROM_uDMAChannelEnable(UDMA_CHANNEL_SSI2RX);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, 0); //Turn off pin E3
 }
+
+
+void
+DisableSSI2Transfer(void)
+{
+    ROM_uDMAChannelDisable(UDMA_CHANNEL_SSI2TX);
+    ROM_uDMAChannelDisable(UDMA_CHANNEL_SSI2RX);
+    ROM_IntDisable(INT_SSI2);
+    ROM_SysCtlPeripheralReset(SYSCTL_PERIPH_SSI2);
+    ROM_SysCtlPeripheralDisable(SYSCTL_PERIPH_SSI2);  
+}
+
+void
+SwitchBuffers(void)
+{
+  if (sDisplayContext.pDisplay==&g_sOffscreenDisplayA){
+    sDisplayContext.pDisplay=&g_sOffscreenDisplayB;
+    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
+  }
+  else{ //switch from B to A
+    sDisplayContext.pDisplay=&g_sOffscreenDisplayA;
+    g_uiSsiTxBufBase=g_uiSsiTxBufBaseB;
+  }
+}
+

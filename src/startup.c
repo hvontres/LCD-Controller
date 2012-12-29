@@ -10,6 +10,7 @@ extern void SysTickHandler(void);
 extern void SSI2IntHandler(void);
 extern void uDMAIntHandler(void);
 extern void uDMAErrorHandler(void);
+extern void  UARTStdioIntHandler(void);
 
 extern int main(void);
 
@@ -47,7 +48,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    IntDefaultHandler,                      // UART0 Rx and Tx
+    UARTStdioIntHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
@@ -88,7 +89,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Hibernate
     IntDefaultHandler,                      // USB0
     IntDefaultHandler,                      // PWM Generator 3
-    uDMAIntHandler,                      // uDMA Software Transfer
+    IntDefaultHandler,                      // uDMA Software Transfer
     uDMAErrorHandler,                      // uDMA Error
     IntDefaultHandler,                      // ADC1 Sequence 0
     IntDefaultHandler,                      // ADC1 Sequence 1

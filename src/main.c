@@ -9,27 +9,13 @@
 #include "common.h"
 #include "spi_xfer.h"
 #include "main.h"
+#include "commands.h"
 
-
-#include "dp.h"
-
-
+#include "dp2.h"
 
 
 
 
-//#define ROWS 240
-//#define PIXELS 20
-//const unsigned int g_u16PixelData[ROWS][PIXELS];
-
-
-
-//*****************************************************************************
-//
-// A spinning line that is used to indicate that the application is running.
-//
-//*****************************************************************************
-//static const char g_pcTwirl[4] = { '\\', '|', '/', '-' };
 
 //*****************************************************************************
 //
@@ -121,117 +107,8 @@ uDMAErrorHandler(void)
     }
 }
 
-//*****************************************************************************
-//
-// The interrupt handler for uDMA interrupts from the memory channel.  This
-// interrupt will increment a counter, and then restart another memory
-// transfer.
-//
-//*****************************************************************************
-void
-uDMAIntHandler(void)
-{
-    unsigned long ulMode;
-
-    //
-    // Check for the primary control structure to indicate complete.
-    //
-    ulMode = ROM_uDMAChannelModeGet(UDMA_CHANNEL_SW);
-    if(ulMode == UDMA_MODE_STOP)
-    {
-        //
-        // Increment the count of completed transfers.
-        //
-        g_ulMemXferCount++;
-
-        //
-        // Configure it for another transfer.
-        //
-        ROM_uDMAChannelTransferSet(UDMA_CHANNEL_SW, UDMA_MODE_AUTO,
-                                   g_ulSrcBuf, g_ulDstBuf, MEM_BUFFER_SIZE);
-
-        //
-        // Initiate another transfer.
-        //
-        ROM_uDMAChannelEnable(UDMA_CHANNEL_SW);
-        ROM_uDMAChannelRequest(UDMA_CHANNEL_SW);
-    }
-
-    //
-    // If the channel is not stopped, then something is wrong.
-    //
-    else
-    {
-        g_ulBadISR++;
-    }
-}
 
 
-
-//*****************************************************************************
-//
-// Initializes the uDMA software channel to perform a memory to memory uDMA
-// transfer.
-//
-//*****************************************************************************
-void
-InitSWTransfer(void)
-{
-    unsigned int uIdx;
-
-    //
-    // Fill the source memory buffer with a simple incrementing pattern.
-    //
-    for(uIdx = 0; uIdx < MEM_BUFFER_SIZE; uIdx++)
-    {
-        g_ulSrcBuf[uIdx] = uIdx;
-    }
-
-    //
-    // Enable interrupts from the uDMA software channel.
-    //
-    ROM_IntEnable(INT_UDMA);
-
-    //
-    // Put the attributes in a known state for the uDMA software channel.
-    // These should already be disabled by default.
-    //
-    ROM_uDMAChannelAttributeDisable(UDMA_CHANNEL_SW,
-                                    UDMA_ATTR_USEBURST | UDMA_ATTR_ALTSELECT |
-                                    (UDMA_ATTR_HIGH_PRIORITY |
-                                    UDMA_ATTR_REQMASK));
-
-    //
-    // Configure the control parameters for the SW channel.  The SW channel
-    // will be used to transfer between two memory buffers, 32 bits at a time.
-    // Therefore the data size is 32 bits, and the address increment is 32 bits
-    // for both source and destination.  The arbitration size will be set to 8,
-    // which causes the uDMA controller to rearbitrate after 8 items are
-    // transferred.  This keeps this channel from hogging the uDMA controller
-    // once the transfer is started, and allows other channels cycles if they
-    // are higher priority.
-    //
-    ROM_uDMAChannelControlSet(UDMA_CHANNEL_SW | UDMA_PRI_SELECT,
-                              UDMA_SIZE_32 | UDMA_SRC_INC_32 | UDMA_DST_INC_32 |
-                              UDMA_ARB_8);
-
-    //
-    // Set up the transfer parameters for the software channel.  This will
-    // configure the transfer buffers and the transfer size.  Auto mode must be
-    // used for software transfers.
-    //
-    ROM_uDMAChannelTransferSet(UDMA_CHANNEL_SW | UDMA_PRI_SELECT,
-                               UDMA_MODE_AUTO, g_ulSrcBuf, g_ulDstBuf,
-                               MEM_BUFFER_SIZE);
-
-    //
-    // Now the software channel is primed to start a transfer.  The channel
-    // must be enabled.  For software based transfers, a request must be
-    // issued.  After this, the uDMA memory transfer begins.
-    //
-    ROM_uDMAChannelEnable(UDMA_CHANNEL_SW);
-    ROM_uDMAChannelRequest(UDMA_CHANNEL_SW);
-}
 
 //*****************************************************************************
 //
@@ -256,17 +133,28 @@ main(void)
     static unsigned long ulPrevUARTCount = 0;
     unsigned long ulXfersCompleted;
     unsigned long ulBytesTransferred;
-    volatile unsigned long ulLoop;
-
-    //
-    g_uiSsiTxBufBase=(unsigned short *)g_u16PixelData;
+    static unsigned long ulLoop=0;
+    static unsigned char On =0;
+    static long lCommandStatus=0;
+    const char *test="01234567890123456789A1234567890123456789B1234567890123456789C1234567890123456789D";
+//*****************************************************************************
+//
+// Input buffer for the command line interpreter.
+//
+//*****************************************************************************
+    static char g_cInput[APP_INPUT_BUF_SIZE];
+        
     
-    g_uiSsiTxBufB=g_uiSsiTxBufBase+SSI_TXBUF_SIZE;
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
  // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
     //
     ROM_FPULazyStackingEnable();
+    
+    //Initialize Buffer Pointers
+    g_uiSsiTxBufBaseA=(unsigned short *)(g_pucOffscreenBufA+6);
+    g_uiSsiTxBufBaseB=(unsigned short *)(g_pucOffscreenBufB+6);
+    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
 
     //
     // Set the clocking to run from the PLL at 50 MHz.
@@ -355,26 +243,52 @@ main(void)
     // Point at the control table to use for channel control structures.
      //
     ROM_uDMAControlBaseSet(g_ucControlTable);
-
-    //
-    // Initialize the uDMA memory to memory transfers.
-    //
-    //InitSWTransfer();
+    //Initialize the Display Buffers - Make sure the Display data starts at an even Address -- need to figure out better way to do this
+    GrOffScreen1BPPInit(&g_sOffscreenDisplayA, g_pucOffscreenBufA+1, 320, 240);
+    UARTprintf("\n Display A Buffer: %x \n",(g_sOffscreenDisplayA.pvDisplayData+5));
+    GrOffScreen1BPPInit(&g_sOffscreenDisplayB, g_pucOffscreenBufB+1, 320, 240);
+    UARTprintf("\n Display B Buffer: %x \n",(g_sOffscreenDisplayB.pvDisplayData+5));
+    
+    // set up Buffer A as current Context
+    GrContextInit(&sDisplayContext, &g_sOffscreenDisplayA);
+    // Set colors for display - White = on, Black = off
+    GrContextForegroundSet(&sDisplayContext,ClrWhite);
+    GrContextBackgroundSet(&sDisplayContext,ClrBlack);
+    GrContextFontSet(&sDisplayContext,&g_sFontCm12b);
 
     
-    //Reset Set BLAK HIGH and reset MSP430
+    
+    //Draw Splash Image
+    //const unsigned char *pucSplashLogo = g_pucSplash;
+    GrImageDraw(&sDisplayContext, g_pucSplash,0,0);
+    
+    // set up Buffer B as current Context
+    SwitchBuffers();
+    
+    for (int line=0;line<24;line++) {
+      
+    GrStringDraw(&sDisplayContext,test,62,0,line*10,0);
+    
+    }
+    SwitchBuffers();
+
+    
+    
+    //Set BLANK HIGH and reset MSP430
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, GPIO_PIN_5);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, GPIO_PIN_4);
     
     //
-    // Initialize the uDMA UART transfers.
+    // Initialize the uDMA SSI transfers.
     //
     InitSSI2Transfer();
-    //InitUART1Transfer();
+    
 
     // Release Blank Pin
     SysCtlDelay(SysCtlClockGet() / 20 / 3);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+    
+    On=1;
     //
     // Remember the current SysTick seconds count.
     //
@@ -389,171 +303,89 @@ main(void)
     // Loop until the button is pressed.  The processor is put to sleep
     // in this loop so that CPU utilization can be measured.
     //
+    
+
+
     while(1)
     {
         //
         // Check to see if one second has elapsed.  If so, the make some
         // updates.
         //
-        if(g_ulSeconds != ulPrevSeconds)
+        
+        UARTprintf("\n>");
+
+        
+        //
+        // Peek to see if a full command is ready for processing
+        //
+        while(UARTPeek('\r') == -1)
         {
             //
-            // Turn on the LED as a heartbeat
+            // millisecond delay.  A SysCtlSleep() here would also be OK.
             //
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
+            SysCtlDelay(SysCtlClockGet() / (1000 / 3));
             
-            //
-            // Print a message to the display showing the CPU usage percent.
-            // The fractional part of the percent value is ignored.
-            //
-            UARTprintf("\r%3d%%   ", g_ulCPUUsage >> 16);
-            
-            //
-            // Remember the new seconds count.
-            //
-            ulPrevSeconds = g_ulSeconds;
+        }
+        
+        //
+        // a '\r' was detected get the line of text from the user.
+        //
+        UARTgets(g_cInput,sizeof(g_cInput));
 
-            //
-            // Calculate how many memory transfers have occurred since the last
-            // second.
-            //
-            ulXfersCompleted = g_ulMemXferCount - ulPrevXferCount;
+        //
+        // Pass the line from the user to the command processor.
+        // It will be parsed and valid commands executed.
+        //
+        lCommandStatus = CmdLineProcess(g_cInput);
 
-            //
-            // Remember the new transfer count.
-            //
-            ulPrevXferCount = g_ulMemXferCount;
-
-            //
-            // Compute how many bytes were transferred in the memory transfer
-            // since the last second.
-            //
-            ulBytesTransferred = ulXfersCompleted * MEM_BUFFER_SIZE * 4;
-
-            //
-            // Print a message showing the memory transfer rate.
-            //
-            if(ulBytesTransferred >= 100000000)
-            {
-                UARTprintf("%3d MB/s   ", ulBytesTransferred / 1000000);
-            }
-            else if(ulBytesTransferred >= 10000000)
-            {
-                UARTprintf("%2d.%01d MB/s  ", ulBytesTransferred / 1000000,
-                           (ulBytesTransferred % 1000000) / 100000);
-            }
-            else if(ulBytesTransferred >= 1000000)
-            {
-                UARTprintf("%1d.%02d MB/s  ", ulBytesTransferred / 1000000,
-                           (ulBytesTransferred % 1000000) / 10000);
-            }
-            else if(ulBytesTransferred >= 100000)
-            {
-                UARTprintf("%3d KB/s   ", ulBytesTransferred / 1000);
-            }
-            else if(ulBytesTransferred >= 10000)
-            {
-                UARTprintf("%2d.%01d KB/s  ", ulBytesTransferred / 1000,
-                           (ulBytesTransferred % 1000) / 100);
-            }
-            else if(ulBytesTransferred >= 1000)
-            {
-                UARTprintf("%1d.%02d KB/s  ", ulBytesTransferred / 1000,
-                           (ulBytesTransferred % 1000) / 10);
-            }
-            else if(ulBytesTransferred >= 100)
-            {
-                UARTprintf("%3d B/s    ", ulBytesTransferred);
-            }
-            else if(ulBytesTransferred >= 10)
-            {
-                UARTprintf("%2d B/s     ", ulBytesTransferred);
-            }
-            else
-            {
-                UARTprintf("%1d B/s      ", ulBytesTransferred);
-            }
-
-            //
-            // Calculate how many UART transfers have occurred since the last
-            // second.
-            //
-            ulXfersCompleted = (g_ulRxBufBCount + g_ulRxBufBCount -
-                                ulPrevUARTCount);
-
-            //
-            // Remember the new UART transfer count.
-            //
-            ulPrevUARTCount = g_ulRxBufBCount;
-
-            //
-            // Compute how many bytes were transferred by the UART.  The number
-            // of bytes received is multiplied by 2 so that the TX bytes
-            // transferred are also accounted for.
-            //
-            ulBytesTransferred = ulXfersCompleted * SSI_RXBUF_SIZE * 2;
-
-            //
-            // Print a message showing the UART transfer rate.
-            //
-            if(ulBytesTransferred >= 1000000)
-            {
-                UARTprintf("%1d.%02d MB/s  ", ulBytesTransferred / 1000000,
-                           (ulBytesTransferred % 1000000) / 10000);
-            }
-            else if(ulBytesTransferred >= 100000)
-            {
-                UARTprintf("%3d KB/s   ", ulBytesTransferred / 1000);
-            }
-            else if(ulBytesTransferred >= 10000)
-            {
-                UARTprintf("%2d.%01d KB/s  ", ulBytesTransferred / 1000,
-                           (ulBytesTransferred % 1000) / 100);
-            }
-            else if(ulBytesTransferred >= 1000)
-            {
-                UARTprintf("%1d.%02d KB/s  ", ulBytesTransferred / 1000,
-                           (ulBytesTransferred % 1000) / 10);
-            }
-            else if(ulBytesTransferred >= 100)
-            {
-                UARTprintf("%3d B/s    ", ulBytesTransferred);
-            }
-            else if(ulBytesTransferred >= 10)
-            {
-                UARTprintf("%2d B/s     ", ulBytesTransferred);
-            }
-            else
-            {
-                UARTprintf("%1d B/s      ", ulBytesTransferred);
-            }
-
-            //
-            // Print a spinning line to make it more apparent that there is
-            // something happening.
-            //
-            UARTprintf("%2ds", TEST_TIME - ulPrevSeconds);
-            
-            //
-            // Turn off the LED.
-            //
-            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0);
+        //
+        // Handle the case of bad command.
+        //
+        if(lCommandStatus == CMDLINE_BAD_CMD)
+        {
+            UARTprintf("Bad command!\n");
         }
 
         //
-        // Put the processor to sleep if there is nothing to do.  This allows
-        // the CPU usage routine to measure the number of free CPU cycles.
-        // If the processor is sleeping a lot, it can be hard to connect to
-        // the target with the debugger.
+        // Handle the case of too many arguments.
         //
-        ROM_SysCtlSleep();
+        else if(lCommandStatus == CMDLINE_TOO_MANY_ARGS)
+        {
+            UARTprintf("Too many arguments for command processor!\n");
+        }
+        
+        
+        
+//         if(g_ulSeconds != ulPrevSeconds)
+//         {
+//             //
+//             // Turn on the LED as a heartbeat
+//             //
+//             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
+//             
+//            
+//             
+//             //
+//             // Turn off the LED.
+//             //
+//             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0);
+//         }
+// 
+//         //
+//         // Put the processor to sleep if there is nothing to do.  This allows
+//         // the CPU usage routine to measure the number of free CPU cycles.
+//         // If the processor is sleeping a lot, it can be hard to connect to
+//         // the target with the debugger.
+//         //
+//         ROM_SysCtlSleep();
 
         //
-        // See if we have run long enough and exit the loop if so.
+        // Check Exit Flag and Exit if set.
         //
-        if(g_ulSeconds >= TEST_TIME)
+        if(g_ucExit)
         {
-            break;
+	 break;
         }
     }
 
@@ -561,9 +393,9 @@ main(void)
     // Indicate on the display that the example is stopped.
     //
     UARTprintf("\nStopped\n");
-    
+    DisableSSI2Transfer();
     //Blank Display
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, GPIO_PIN_4);
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, GPIO_PIN_5);
 
     //
     // Loop forever with the CPU not sleeping, so the debugger can connect.

@@ -3,13 +3,22 @@
 
 //*****************************************************************************
 //
-// The transmit and receive buffers used for the UART transfers.  There is one
+// The transmit and receive buffers used for the SSI transfers.  There is one
 // transmit buffer and a pair of recieve ping-pong buffers.
 //
 //*****************************************************************************
 
 
-extern unsigned short g_uiSsiRxBuf[SSI_RXBUF_SIZE];
-extern unsigned short *g_uiSsiTxBufBase;//=g_uiPixelData[0];
-extern unsigned short *g_uiSsiTxBufB;//=g_uiPixelData[SSI_TXBUF_SIZE];
+extern unsigned short *g_uiSsiRxBuf;
+extern unsigned short *g_uiSsiTxBufBase;
+extern unsigned short *g_uiSsiTxBufBaseA;
+extern unsigned short *g_uiSsiTxBufBaseB;
+extern unsigned short *g_uiSsiTxBufB;
 extern unsigned long g_ulRxBufBCount;
+extern unsigned char g_ucExit;
+
+// Display buffers
+extern tDisplay g_sOffscreenDisplayA;
+extern tDisplay g_sOffscreenDisplayB;
+// Acitive Display Context
+extern tContext sDisplayContext;
