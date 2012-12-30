@@ -14,8 +14,10 @@ extern unsigned short *g_uiSsiTxBufBase;
 extern unsigned short *g_uiSsiTxBufBaseA;
 extern unsigned short *g_uiSsiTxBufBaseB;
 extern unsigned short *g_uiSsiTxBufB;
+extern char g_ucScreenText[30][54];
 extern unsigned long g_ulRxBufBCount;
 extern unsigned char g_ucExit;
+//extern unsigned char *g_pucSplash;
 
 // Display buffers
 extern tDisplay g_sOffscreenDisplayA;

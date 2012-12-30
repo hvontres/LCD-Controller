@@ -3,12 +3,18 @@
 #include "spi_xfer.h"
 #include "commands.h"
 
+#include "blank.h"
+#include "dp2.h"
 
+static unsigned char Current_Line=0;
 
 // Command Table Entries
     tCmdLineEntry g_sCmdTable[] =
     {
-    { "s", CMD_Switch, "Switch Buffers" },
+    { "s", CMD_Splash, "Draw Splash Image" },
+    { "w", CMD_Write, "Write String to Buffer" },
+    { "l", CMD_Line, "Set Current Line Number" },
+    { "c", CMD_Clear, "Clear Display and set current line to 0" },
     { "b", CMD_Blank, "Blank the display." },
     { "u", CMD_UnBlank, "Unblank the display." },
     { "x", CMD_Exit, "Exit MainLoop." },
@@ -17,6 +23,7 @@
     };
     
 const int NUM_CMD = sizeof(g_sCmdTable)/sizeof(tCmdLineEntry);
+const char BlankLine[54]={[0 ... 52] = 32};;
 
 //*****************************************************************************
 //
@@ -56,6 +63,32 @@ CMD_Switch (int argc, char **argv)
 }
 
 int
+CMD_Clear (int argc, char **argv)
+{
+  Current_Line=0;
+  GrImageDraw(&sDisplayContext, g_pucBlank,0,0);
+  for (int line=0;line<30;line++) {
+      g_ucScreenText[line][0]=0;
+    }
+  UARTprintf("1%s1\n",BlankLine);
+  return (0);
+}
+
+int
+CMD_Splash (int argc, char **argv)
+{
+  Current_Line=0;
+  GrImageDraw(&sDisplayContext, g_pucSplash,0,0);
+  return (0);
+}
+
+int
+CMD_Line (int argc, char **argv)
+{
+  Current_Line=atoi(argv[1]);
+  return (0);
+}
+int
 CMD_Exit (int argc, char **argv)
 {
   UARTprintf("\nExit here :)\n");
@@ -89,3 +122,51 @@ CMD_UnBlank (int argc, char **argv)
   return (0);
 }
 
+int 
+CMD_Write (int argc, char **argv)
+{
+  char RedrawAll=0;
+  char *Input;
+  //UARTprintf("argc: %i\n",argc);
+  Input=argv[1];
+  while(*Input){
+    if (*Input=='\t'){
+      *Input=' ';
+    }
+    Input++;
+  }
+    
+  if (Current_Line >29){
+    for (int line=1;line<30;line++) {
+      strncpy (g_ucScreenText[line-1] , g_ucScreenText[line], sizeof(g_ucScreenText[line-1]) );
+    }
+    Current_Line=29;
+    RedrawAll=1; 
+  }
+  //UARTprintf("%i: %s \n",Current_Line,argv[1]);
+  strncpy (g_ucScreenText[Current_Line] , BlankLine, sizeof(g_ucScreenText[Current_Line]) );
+  strncpy (g_ucScreenText[Current_Line] , argv[1], sizeof(g_ucScreenText[Current_Line]) );
+  //UARTprintf("%s \n",g_ucScreenText[Current_Line]);
+  if (RedrawAll){
+    WriteDisplay(); //Refresh Whole Screen during scrolling
+  }
+  else { // Redraw Current Line Only
+    GrStringDraw(&sDisplayContext,BlankLine,53,0,Current_Line*8,1); //Blank line
+    GrStringDraw(&sDisplayContext,g_ucScreenText[Current_Line],53,0,Current_Line*8,1); //Update Line
+  }
+  Current_Line++;
+  return (0);
+}
+
+
+void
+WriteDisplay(void)
+{
+  //Clear Screen
+  GrImageDraw(&sDisplayContext, g_pucBlank,0,0);
+  for (int line=0;line<30;line++) {
+      
+    GrStringDraw(&sDisplayContext,g_ucScreenText[line],53,0,line*8,1);
+    }
+    SwitchBuffers();
+}

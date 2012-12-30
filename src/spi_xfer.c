@@ -338,12 +338,12 @@ void
 SwitchBuffers(void)
 {
   if (sDisplayContext.pDisplay==&g_sOffscreenDisplayA){
-    sDisplayContext.pDisplay=&g_sOffscreenDisplayB;
+    sDisplayContext.pDisplay=&g_sOffscreenDisplayA;
     g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
   }
   else{ //switch from B to A
     sDisplayContext.pDisplay=&g_sOffscreenDisplayA;
-    g_uiSsiTxBufBase=g_uiSsiTxBufBaseB;
+    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
   }
 }
 

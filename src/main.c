@@ -11,7 +11,7 @@
 #include "main.h"
 #include "commands.h"
 
-#include "dp2.h"
+
 
 
 
@@ -157,10 +157,10 @@ main(void)
     g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
 
     //
-    // Set the clocking to run from the PLL at 50 MHz.
+    // Set the clocking to run from the PLL at 80 MHz.
     //
-    ROM_SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
-                       SYSCTL_XTAL_16MHZ);
+    ROM_SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |SYSCTL_XTAL_16MHZ);
+    //ROM_SysCtlClockSet(SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
 
     //
     // Enable peripherals to operate when CPU is in sleep.
@@ -255,19 +255,25 @@ main(void)
     GrContextForegroundSet(&sDisplayContext,ClrWhite);
     GrContextBackgroundSet(&sDisplayContext,ClrBlack);
     GrContextFontSet(&sDisplayContext,&g_sFontCm12b);
+    
 
     
     
     //Draw Splash Image
     //const unsigned char *pucSplashLogo = g_pucSplash;
-    GrImageDraw(&sDisplayContext, g_pucSplash,0,0);
+    //GrImageDraw(&sDisplayContext, g_pucSplash,0,0);
+    for (int line=0;line<24;line++) {
+      
+    GrStringDraw(&sDisplayContext,test,62,0,line*10,1);
+    
+    }
     
     // set up Buffer B as current Context
     SwitchBuffers();
-    
-    for (int line=0;line<24;line++) {
+    GrContextFontSet(&sDisplayContext,&g_sFontFixed6x8);
+    for (int line=0;line<30;line++) {
       
-    GrStringDraw(&sDisplayContext,test,62,0,line*10,0);
+    GrStringDraw(&sDisplayContext,test,53,0,line*8,1);
     
     }
     SwitchBuffers();
@@ -304,6 +310,7 @@ main(void)
     // in this loop so that CPU utilization can be measured.
     //
     
+    UARTprintf("Rx Buffer Size: %i",UARTRxBytesAvail());
 
 
     while(1)

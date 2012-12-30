@@ -14,6 +14,8 @@
 
 #define APP_INPUT_BUF_SIZE               128
 
+
+
 //*****************************************************************************
 //
 // The count of uDMA errors.  This value is incremented by the uDMA error
@@ -80,5 +82,9 @@ tDisplay g_sOffscreenDisplayA;
 tDisplay g_sOffscreenDisplayB;
 // Context for Active Display
 tContext sDisplayContext;
+
+
+//array for string data to display (53 cols+null*30 rows)
+char g_ucScreenText[30][54]={'0'};
 
 

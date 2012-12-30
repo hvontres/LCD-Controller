@@ -1,3 +1,5 @@
+#define UART_RX_BUFFER_SIZE     128
+
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -18,3 +20,4 @@
 #include "utils/uartstdio.h"
 #include "utils/ustdlib.h"
 #include "utils/cmdline.h"
+#include "string.h"
