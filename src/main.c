@@ -153,7 +153,7 @@ main(void)
     
     //Initialize Buffer Pointers
     g_uiSsiTxBufBaseA=(unsigned short *)(g_pucOffscreenBufA+6);
-    g_uiSsiTxBufBaseB=(unsigned short *)(g_pucOffscreenBufB+6);
+    
     g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
 
     //
@@ -246,39 +246,16 @@ main(void)
     //Initialize the Display Buffers - Make sure the Display data starts at an even Address -- need to figure out better way to do this
     GrOffScreen1BPPInit(&g_sOffscreenDisplayA, g_pucOffscreenBufA+1, 320, 240);
     UARTprintf("\n Display A Buffer: %x \n",(g_sOffscreenDisplayA.pvDisplayData+5));
-    GrOffScreen1BPPInit(&g_sOffscreenDisplayB, g_pucOffscreenBufB+1, 320, 240);
-    UARTprintf("\n Display B Buffer: %x \n",(g_sOffscreenDisplayB.pvDisplayData+5));
+    
     
     // set up Buffer A as current Context
     GrContextInit(&sDisplayContext, &g_sOffscreenDisplayA);
     // Set colors for display - White = on, Black = off
     GrContextForegroundSet(&sDisplayContext,ClrWhite);
     GrContextBackgroundSet(&sDisplayContext,ClrBlack);
-    GrContextFontSet(&sDisplayContext,&g_sFontCm12b);
-    
 
-    
-    
-    //Draw Splash Image
-    //const unsigned char *pucSplashLogo = g_pucSplash;
-    //GrImageDraw(&sDisplayContext, g_pucSplash,0,0);
-    for (int line=0;line<24;line++) {
-      
-    GrStringDraw(&sDisplayContext,test,62,0,line*10,1);
-    
-    }
-    
-    // set up Buffer B as current Context
-    SwitchBuffers();
     GrContextFontSet(&sDisplayContext,&g_sFontFixed6x8);
-    for (int line=0;line<30;line++) {
-      
-    GrStringDraw(&sDisplayContext,test,53,0,line*8,1);
-    
-    }
-    SwitchBuffers();
-
-    
+    CMD_Splash(0,0); //Display Splash Screen
     
     //Set BLANK HIGH and reset MSP430
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, GPIO_PIN_5);

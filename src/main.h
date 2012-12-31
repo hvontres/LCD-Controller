@@ -72,14 +72,12 @@ unsigned char g_ucExit =0;
 
 //*****************************************************************************
 //
-// Define two 1BPP offscreen buffers and display structures.  ]
+// Define a 1BPP offscreen buffer and display structure.
 //
 //*****************************************************************************
 #define OFFSCREEN_BUF_SIZE GrOffScreen1BPPSize(320, 240)
 unsigned char g_pucOffscreenBufA[OFFSCREEN_BUF_SIZE+1];
-unsigned char g_pucOffscreenBufB[OFFSCREEN_BUF_SIZE+1];
 tDisplay g_sOffscreenDisplayA;
-tDisplay g_sOffscreenDisplayB;
 // Context for Active Display
 tContext sDisplayContext;
 

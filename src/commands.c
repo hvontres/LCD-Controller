@@ -168,5 +168,4 @@ WriteDisplay(void)
       
     GrStringDraw(&sDisplayContext,g_ucScreenText[line],53,0,line*8,1);
     }
-    SwitchBuffers();
 }

@@ -334,16 +334,5 @@ DisableSSI2Transfer(void)
     ROM_SysCtlPeripheralDisable(SYSCTL_PERIPH_SSI2);  
 }
 
-void
-SwitchBuffers(void)
-{
-  if (sDisplayContext.pDisplay==&g_sOffscreenDisplayA){
-    sDisplayContext.pDisplay=&g_sOffscreenDisplayA;
-    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
-  }
-  else{ //switch from B to A
-    sDisplayContext.pDisplay=&g_sOffscreenDisplayA;
-    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
-  }
-}
+
 
