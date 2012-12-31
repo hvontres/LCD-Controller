@@ -83,7 +83,7 @@ Blank:
   eint ;allow interupts so we can wake back up
   bis.b #(LPM0 + GIE),SR ;go to sleep, wake up on interupt Slave needs to setup first Pixel before releasing P1.4
   dint ; No interupts please
-  bic.b #0x02,&P1OUT ; turn on VEE
+  
   
   
   mov #0x3210,&USISR
@@ -154,7 +154,7 @@ MainLoop:
   
   
   bis.b #0x40,MASK2; set flm bit
-  
+  bic.b #0x02,&P1OUT ; turn on VEE
   ;bis.b #0x01,&P1OUT ;turn on LED
  
   mov ROWS,ROWCNT ;reset row counter
