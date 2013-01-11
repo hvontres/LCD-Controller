@@ -1,3 +1,33 @@
+//*****************************************************************************
+// SPI Interupt Handler and Iniit routine 
+//*****************************************************************************
+
+//*****************************************************************************
+// Copyright (c) 2012, Henry von Tresckow
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+
+// Redistributions of source code must retain the above copyright notice, this list
+// of conditions and the following disclaimer.
+
+// Redistributions in binary form must reproduce the above copyright notice, this
+// list of conditions and the following disclaimer in the documentation and/or
+// other materials provided with the distribution.
+
+// THIS SOFTWARE IS PROVIDED BY HENRY VON TRESCKOW "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL {{THE COPYRIGHT HOLDER OR CONTRIBUTORS}} BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+//*****************************************************************************
+
 #include "common.h"
 #include "spi_xfer.h"
 #include "globals.h"
@@ -18,6 +48,7 @@ SSI2IntHandler(void)
 {
     unsigned long ulStatus;
     unsigned long ulMode;
+    
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, GPIO_PIN_3); // Turn on pin E3 for debug and timing
     
     //
@@ -46,7 +77,6 @@ SSI2IntHandler(void)
     // transmit buffer is done.  The uDMA controller should still be transmitting
     // data from the "B" buffer.
     //
-#if 1
     if(ulMode == UDMA_MODE_STOP)
 
     {
@@ -60,7 +90,7 @@ SSI2IntHandler(void)
 	  g_ulBufferSegCount=0;
 	}
 	
-	//UARTprintf("%i",g_ulBufferSegCount);
+	
         //
         // Set up the next transfer for the "A" buffer, using the primary
         // control structure.  When the ongoing receive into the "B" buffer is
@@ -93,7 +123,7 @@ SSI2IntHandler(void)
 
     if(ulMode == UDMA_MODE_STOP)
     {
-       //GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, GPIO_PIN_3);
+       
         //
         
 
@@ -111,18 +141,16 @@ SSI2IntHandler(void)
                                    (void *)(g_uiSsiTxBufBase+(g_ulBufferSegCount*2+1)*SSI_TXBUF_SIZE),
                                    (void *)(SSI2_BASE + SSI_O_DR),
 				   (unsigned long)SSI_TXBUF_SIZE);
-	//GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, 0);
+	
     }
-#endif
+    
     //
-    // If the UART1 DMA TX channel is disabled, that means the RX DMA transfer
+    // If the UART1 DMA RX channel is disabled, that means the RX DMA transfer
     // is done.
     //
     if(!ROM_uDMAChannelIsEnabled(UDMA_CHANNEL_SSI2RX))
     {
-	// Increment a counter to indicate data was received into buffer .
-        //
-        g_ulRxBufBCount++;
+
         //
         // Start another DMA transfer from SSI2RX.
         //
@@ -133,12 +161,11 @@ SSI2IntHandler(void)
                                    (unsigned long)SSI_RXBUF_SIZE);
 
         //
-        // The uDMA TX channel must be re-enabled.
+        // The uDMA RX channel must be re-enabled.
         //
         ROM_uDMAChannelEnable(UDMA_CHANNEL_SSI2RX);
     }
-    //GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, 0);
-    //GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, 0); // turn off pin E3
 }
 

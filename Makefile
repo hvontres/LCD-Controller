@@ -1,6 +1,6 @@
 
 #Taget Binary Name
-TARGET      = udma_demo
+TARGET      = lcd_control
 
 # List all the source files here
 SOURCES    += src/main.c
@@ -45,6 +45,10 @@ FPU         = softfp
 # Remove # to enable verbose
 VERBOSE     = #1
 
+#MSP430 Defs
+
+MSPDIR = Msp430
+MSPSRC = spi_master2
 
 # Flag Definitions
 ###############################################################################
@@ -110,12 +114,14 @@ CP          = cp -p
 RM          = rm -rf
 MV          = mv
 MKDIR       = mkdir -p
+MSPASM	    = naken_asm -I $(MSPDIR) -o
+
 ###############################################################################
 
 
 # Command Definitions, Leave it alone unless you hate yourself.
 ###############################################################################
-all: dirs bin/$(TARGET).bin size
+all: dirs bin/$(TARGET).bin size msp
 
 asm: $(ASMS)
 
@@ -182,6 +188,10 @@ dirs:
 clean:
 	-$(RM) .obj/*
 	-$(RM) bin/*
+	
+# Build MSP430 Firmware
+msp:
+	$(MSPASM) bin/$(MSPSRC).bin $(MSPDIR)/$(MSPSRC).asm
 
 # Flash The Board
 install: all
@@ -189,7 +199,7 @@ install: all
 	 then                                                                     \
 	     echo "  FLASH    bin/$(TARGET).bin";                                 \
 	 else                                                                     \
-	     echo sudo $(FLASH) bin/$(TARGET).bin;                                \
+	     echo $(FLASH) bin/$(TARGET).bin;                                \
 	 fi
 	 $(FLASH) bin/$(TARGET).bin
 

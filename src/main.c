@@ -2,10 +2,33 @@
 //
 // main.c - Main LCD Controller Code.
 //
-// 
-//
 //*****************************************************************************
 
+//*****************************************************************************
+// Copyright (c) 2012, Henry von Tresckow
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+
+// Redistributions of source code must retain the above copyright notice, this list
+// of conditions and the following disclaimer.
+
+// Redistributions in binary form must reproduce the above copyright notice, this
+// list of conditions and the following disclaimer in the documentation and/or
+// other materials provided with the distribution.
+
+// THIS SOFTWARE IS PROVIDED BY HENRY VON TRESCKOW "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL {{THE COPYRIGHT HOLDER OR CONTRIBUTORS}} BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+//*****************************************************************************
 #include "common.h"
 #include "spi_xfer.h"
 #include "main.h"
@@ -130,13 +153,13 @@ main(void)
 {
     static unsigned long ulPrevSeconds;
     static unsigned long ulPrevXferCount;
-    static unsigned long ulPrevUARTCount = 0;
-    unsigned long ulXfersCompleted;
-    unsigned long ulBytesTransferred;
-    static unsigned long ulLoop=0;
+   // static unsigned long ulPrevUARTCount = 0;
+   // unsigned long ulXfersCompleted;
+   // unsigned long ulBytesTransferred;
+   // static unsigned long ulLoop=0;
     static unsigned char On =0;
     static long lCommandStatus=0;
-    const char *test="01234567890123456789A1234567890123456789B1234567890123456789C1234567890123456789D";
+    // const char *test="01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 //*****************************************************************************
 //
 // Input buffer for the command line interpreter.
@@ -145,21 +168,17 @@ main(void)
     static char g_cInput[APP_INPUT_BUF_SIZE];
         
     
-    // Enable lazy stacking for interrupt handlers.  This allows floating-point
- // instructions to be used within interrupt handlers, but at the expense of
-    // extra stack usage.
-    //
-    ROM_FPULazyStackingEnable();
+ 
+ 
+    //Initialize SSI Buffer Pointer
+    g_uiSsiTxBufBase=(unsigned short *)(g_pucOffscreenBufA+6);
     
-    //Initialize Buffer Pointers
-    g_uiSsiTxBufBaseA=(unsigned short *)(g_pucOffscreenBufA+6);
-    
-    g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
+    //g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
 
     //
     // Set the clocking to run from the PLL at 80 MHz.
     //
-    ROM_SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |SYSCTL_XTAL_16MHZ);
+    //ROM_SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |SYSCTL_XTAL_16MHZ);
     //ROM_SysCtlClockSet(SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
 
     //
@@ -189,11 +208,11 @@ main(void)
     //
     // Initialize the UART.
     //
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    ROM_SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_UART0);
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+//     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+//     ROM_SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_UART0);
+//     GPIOPinConfigure(GPIO_PA0_U0RX);
+//     GPIOPinConfigure(GPIO_PA1_U0TX);
+//     ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTStdioInit(0);
     UARTprintf("\033[2JuDMA Example\n");
 
@@ -243,9 +262,10 @@ main(void)
     // Point at the control table to use for channel control structures.
      //
     ROM_uDMAControlBaseSet(g_ucControlTable);
+    
     //Initialize the Display Buffers - Make sure the Display data starts at an even Address -- need to figure out better way to do this
     GrOffScreen1BPPInit(&g_sOffscreenDisplayA, g_pucOffscreenBufA+1, 320, 240);
-    UARTprintf("\n Display A Buffer: %x \n",(g_sOffscreenDisplayA.pvDisplayData+5));
+    
     
     
     // set up Buffer A as current Context
