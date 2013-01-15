@@ -1,4 +1,8 @@
 
+
+
+#based on Code from https://github.com/eehusky/Stellaris-GCC.git
+
 #Taget Binary Name
 TARGET      = lcd_control
 

@@ -1,3 +1,7 @@
+/*
+based on Code from https://github.com/eehusky/Stellaris-GCC.git
+*/
+
 _stack_size = 4K;
 
 MEMORY

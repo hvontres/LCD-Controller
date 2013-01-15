@@ -113,6 +113,6 @@ tContext sDisplayContext;
 
 
 //array for string data to display (53 cols+null*30 rows)
-char g_ucScreenText[30][54]={{'0'}};
+char g_ucScreenText[LINES][COLS+1]={{'0'}};
 
 

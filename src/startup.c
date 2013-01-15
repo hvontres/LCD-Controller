@@ -1,3 +1,5 @@
+//based on Code from https://github.com/eehusky/Stellaris-GCC.git
+
 #include "stellariscommon.h"
 
 void ResetISR(void);

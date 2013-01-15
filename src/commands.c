@@ -1,5 +1,4 @@
-#include "common.h"
-#include "globals.h"
+
 //*****************************************************************************
 // Serial Command Handler
 //*****************************************************************************
@@ -30,6 +29,8 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 //*****************************************************************************
 
+#include "common.h"
+#include "globals.h"
 #include "spi_xfer.h"
 #include "commands.h"
 
@@ -53,7 +54,7 @@ static unsigned char Current_Line=0;
     };
     
 const int NUM_CMD = sizeof(g_sCmdTable)/sizeof(tCmdLineEntry);
-const char BlankLine[54]={[0 ... 52] = 32};
+const char BlankLine[COLS+1]={[0 ... COLS-1] = 32}; // Blank Line
 
 //*****************************************************************************
 //
@@ -82,7 +83,13 @@ CMD_Help (int argc, char **argv)
     return (0);
 }
 
-
+//*****************************************************************************
+//
+// Command: clear
+//
+// Erase current screen and set Current_Line to 0
+//
+//*****************************************************************************
 
 
 int
@@ -97,6 +104,14 @@ CMD_Clear (int argc, char **argv)
   return (0);
 }
 
+//*****************************************************************************
+//
+// Command: splash
+//
+// Draw Splash Screen Image from Flash
+//
+//*****************************************************************************
+
 int
 CMD_Splash (int argc, char **argv)
 {
@@ -105,12 +120,28 @@ CMD_Splash (int argc, char **argv)
   return (0);
 }
 
+//*****************************************************************************
+//
+// Command: line
+//
+// set Current_Line to a new postion on Screen
+//
+//*****************************************************************************
+
 int
 CMD_Line (int argc, char **argv)
 {
   Current_Line=atoi(argv[1]);
   return (0);
 }
+
+//*****************************************************************************
+//
+// Command: exit
+//
+// Exit MainLoop
+//
+//*****************************************************************************
 int
 CMD_Exit (int argc, char **argv)
 {
@@ -119,16 +150,30 @@ CMD_Exit (int argc, char **argv)
   return (0);
 }
 
+//*****************************************************************************
+//
+// Command: blank
+//
+// Turn off backlight,Vee and 5V to screen
+//
+//*****************************************************************************
 int
 CMD_Blank (int argc, char **argv)
 {
-  //Turn Off SSI2 Xfers
+  //Turn Off SSI Xfers
   DisableSSI2Transfer();
   //Blank Display
   GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, GPIO_PIN_5);
   return (0);
 }
 
+//*****************************************************************************
+//
+// Command: unblank
+//
+// Turn on backlight,Vee and 5V to screen
+//
+//*****************************************************************************
 int
 CMD_UnBlank (int argc, char **argv)
 {
@@ -137,14 +182,21 @@ CMD_UnBlank (int argc, char **argv)
   //Reboot MSP430
   GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
   GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, GPIO_PIN_4);
-  // Setup SSI2 Xfers
+  // Setup SSI Xfers
   InitSSI2Transfer();
-  // Release Blank Pin after short delay
-  SysCtlDelay(SysCtlClockGet() / 20 / 3);
+  // Release Blank Pin 
   GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
   return (0);
 }
 
+//*****************************************************************************
+//
+// Command: write
+//
+// Write string from UART buffer to Current line and Increment line. If at
+// the end of the screen, start scrolling
+//
+//*****************************************************************************
 int 
 CMD_Write (int argc, char **argv)
 {
@@ -182,6 +234,11 @@ CMD_Write (int argc, char **argv)
 }
 
 
+//*****************************************************************************
+//
+// Function to update all lines on display
+//
+//*****************************************************************************
 void
 WriteDisplay(void)
 {

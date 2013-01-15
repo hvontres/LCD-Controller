@@ -288,7 +288,6 @@ main(void)
     
 
     // Release Blank Pin
-    SysCtlDelay(SysCtlClockGet() / 20 / 3);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
     
     On=1;
