@@ -38,6 +38,7 @@
 #include "dp2.h"
 
 static unsigned char Current_Line=0;
+static unsigned int Current_Pixel=0;
 
 // Command Table Entries
     tCmdLineEntry g_sCmdTable[] =
@@ -48,6 +49,8 @@ static unsigned char Current_Line=0;
     { "c", CMD_Clear, "Clear Display and set current line to 0" },
     { "b", CMD_Blank, "Blank the display." },
     { "u", CMD_UnBlank, "Unblank the display." },
+    { "sp", CMD_SetPixel, "Set Current Pixel." },
+    { "wp", CMD_WritePixel, "Write Current Pixel and Increment Pointer." },
     { "x", CMD_Exit, "Exit MainLoop." },
     { "h", CMD_Help, "Application help." },
     {0,0,0}
@@ -132,6 +135,40 @@ int
 CMD_Line (int argc, char **argv)
 {
   Current_Line=atoi(argv[1]);
+  return (0);
+}
+
+//*****************************************************************************
+//
+// Command: SetPixel
+//
+// set Current_Pixel to a new postion on Screen
+//
+//*****************************************************************************
+
+int
+CMD_SetPixel (int argc, char **argv)
+{
+  Current_Pixel=atoi(argv[1]);
+  return (0);
+}
+
+//*****************************************************************************
+//
+// Command: SetPixel
+//
+// set Current_Pixel to a new postion on Screen
+//
+//*****************************************************************************
+
+int
+CMD_WritePixel (int argc, char **argv)
+{
+  *(g_ucBufBase+Current_Pixel)=atoi(argv[1]);
+  Current_Pixel++;
+  if (Current_Pixel> OFFSCREEN_BUF_SIZE-5){
+    Current_Pixel=0;
+  }
   return (0);
 }
 

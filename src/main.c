@@ -173,14 +173,10 @@ main(void)
     //Initialize SSI Buffer Pointer
     g_uiSsiTxBufBase=(unsigned short *)(g_pucOffscreenBufA+6);
     
-    //g_uiSsiTxBufBase=g_uiSsiTxBufBaseA;
-
-    //
-    // Set the clocking to run from the PLL at 80 MHz.
-    //
-    //ROM_SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |SYSCTL_XTAL_16MHZ);
-    //ROM_SysCtlClockSet(SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
-
+    //Initialize Pixel Base Pointer
+    g_ucBufBase=(unsigned char *)(g_pucOffscreenBufA+6);
+    
+    
     //
     // Enable peripherals to operate when CPU is in sleep.
     //
@@ -198,21 +194,10 @@ main(void)
     ROM_GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
     
-    // Reset Pin
+    // Configure Debug Pin (E3),Reset Pin (E4) and Blank Pin (E5)
     ROM_GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5);
     
-    //Blank Pin
-    
-    //ROM_GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_5);
-   
-    //
-    // Initialize the UART.
-    //
-//     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-//     ROM_SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_UART0);
-//     GPIOPinConfigure(GPIO_PA0_U0RX);
-//     GPIOPinConfigure(GPIO_PA1_U0TX);
-//     ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    // Set up UART0 as Stdin/Stdout
     UARTStdioInit(0);
     UARTprintf("\033[2JuDMA Example\n");
 
@@ -221,11 +206,7 @@ main(void)
     //
     UARTprintf("Stellaris @ %u MHz\n\n", ROM_SysCtlClockGet() / 1000000);
     UARTprintf("ptr_base:%x \n",g_uiSsiTxBufBase);
-    //
-    // Show statistics headings.
-    //
-    UARTprintf("CPU    Memory     UART       Remaining\n");
-    UARTprintf("Usage  Transfers  Transfers  Time\n");
+    
 
     //
     // Configure SysTick to occur 100 times per second, to use as a time
@@ -263,13 +244,14 @@ main(void)
      //
     ROM_uDMAControlBaseSet(g_ucControlTable);
     
-    //Initialize the Display Buffers - Make sure the Display data starts at an even Address -- need to figure out better way to do this
+    //Initialize the Display Buffer, making sure the image data starts on an even address 
     GrOffScreen1BPPInit(&g_sOffscreenDisplayA, g_pucOffscreenBufA+1, 320, 240);
     
     
     
     // set up Buffer A as current Context
     GrContextInit(&sDisplayContext, &g_sOffscreenDisplayA);
+    
     // Set colors for display - White = on, Black = off
     GrContextForegroundSet(&sDisplayContext,ClrWhite);
     GrContextBackgroundSet(&sDisplayContext,ClrBlack);

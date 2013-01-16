@@ -91,9 +91,9 @@ unsigned short g_uiSsiRxBuf[SSI_RXBUF_SIZE];
 
 //pointer for Base address for SSI Transfers.
 unsigned short *g_uiSsiTxBufBase;
-// Base A and Base B are the base address in the Framebuffers
-unsigned short *g_uiSsiTxBufBaseA;
-unsigned short *g_uiSsiTxBufBaseB;
+
+ //Pixel Base Pointer
+unsigned char *g_ucBufBase;
 
 
 // Flag to exit program
@@ -105,7 +105,7 @@ unsigned char g_ucExit =0;
 // Define a 1BPP offscreen buffer and display structure.
 //
 //*****************************************************************************
-#define OFFSCREEN_BUF_SIZE GrOffScreen1BPPSize(320, 240)
+
 unsigned char g_pucOffscreenBufA[OFFSCREEN_BUF_SIZE+1] __attribute__ ((aligned(2))); //make sure the buffer is aligned on a 16 bit boundry
 tDisplay g_sOffscreenDisplayA;
 // Context for Active Display

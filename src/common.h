@@ -28,12 +28,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 //*****************************************************************************
 
-// Setup 128 char UART Buffer
-#define UART_RX_BUFFER_SIZE     128
 
-//define Screen Geometry for Text
-#define LINES 30
-#define COLS 53
 
 // common includes
 #include "inc/hw_ints.h"
@@ -57,3 +52,16 @@
 #include "utils/ustdlib.h"
 #include "utils/cmdline.h"
 #include "string.h"
+
+// Setup 128 char UART Buffer
+#define UART_RX_BUFFER_SIZE     128
+
+//define Screen Geometry
+#define PIXEL_COLS 320
+#define PIXEL_ROWS 240
+
+#define OFFSCREEN_BUF_SIZE GrOffScreen1BPPSize(PIXEL_COLS, PIXEL_ROWS)
+
+//define Screen Geometry for Text
+#define LINES 30
+#define COLS 53

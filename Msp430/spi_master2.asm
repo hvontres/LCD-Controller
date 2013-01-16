@@ -5,6 +5,8 @@
 // Built with the Naken assembler (http://www.mikekohn.net/micro/naken_asm.php)
 // This Code needs a part with the USI subsytem in order to support 16bit
 // SPI transfers.
+// The data is recieved LSB first to make sure the pixels match the order on the
+// Data lines.
 //  MCLK = SMCLK = 16 Mhz DCO
 //
 //           Master
@@ -135,21 +137,19 @@ Blank: ;label for blanking display
   mov #0x3210,&USISR; initialize USISR, usefull for debugging SPI stream
   
   mov.b #0x50,&USICNT ;get first pixel
-  mov.w #32,LOWNIB
+  mov.w #32,LOWNIB ; 32 Cycle delay to make sure Slave is ready
 Wait:
   dec LOWNIB
   jnz Wait
   
-
-  
   bis.b #0x01,&P1OUT ;turn on backlight and +5V for Display
   
 MainLoop:
-  mov &USISR,LOWNIB ; get current pixel
+  mov &USISR,LOWNIB ; get current pixels
   mov.b #0x50,&USICNT ;start next xfer
   
   swpb LOWNIB ; swap endianness
-  mov LOWNIB,HIGHNIB
+  mov LOWNIB,HIGHNIB ; make copy for high nibbles
   ; shift high nibble right by 4 bits
   rra HIGHNIB
   rra HIGHNIB

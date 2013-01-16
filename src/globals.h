@@ -34,6 +34,8 @@ extern unsigned short *g_uiSsiRxBuf; //Pointer to SSI Rx Buffer
 
 extern unsigned short *g_uiSsiTxBufBase; //Base Pointer used to index into the Graphics buffer during SSI Tx
 
+extern unsigned char *g_ucBufBase; //Base Pointer used to index into the Graphics buffer for writing pixels from UART
+
 extern char g_ucScreenText[LINES][COLS]; // Text buffer for text display
 
 extern unsigned char g_ucExit; // Exit flag, used to exit main loop
