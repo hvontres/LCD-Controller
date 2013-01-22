@@ -62,7 +62,6 @@ static unsigned long g_ulBufferSegCount;
 void SSI2IntHandler(void);
 void InitSSI2Transfer(void);
 void DisableSSI2Transfer(void);
-void SwitchBuffers(void);
 
 
 
