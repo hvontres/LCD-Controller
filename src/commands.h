@@ -46,4 +46,7 @@ extern int CMD_Exit (int argc, char **argv);
 extern int CMD_UnBlank (int argc, char **argv);
 extern int CMD_SetPixel (int argc, char **argv);
 extern int CMD_WritePixel (int argc, char **argv);
+extern int CMD_Animate (int argc, char **argv);
+extern int CMD_Normal (int argc, char **argv);
+extern int CMD_Invert (int argc, char **argv);
 extern void WriteDisplay(void);

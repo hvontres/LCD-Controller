@@ -212,7 +212,7 @@ main(void)
     // Configure SysTick to occur 100 times per second, to use as a time
     // reference.  Enable SysTick to generate interrupts.
     //
-    ROM_SysTickPeriodSet(ROM_SysCtlClockGet() / SYSTICKS_PER_SECOND);
+    ROM_SysTickPeriodSet(ROM_SysCtlClockGet() / (SYSTICKS_PER_SECOND));
     ROM_SysTickIntEnable();
     ROM_SysTickEnable();
 

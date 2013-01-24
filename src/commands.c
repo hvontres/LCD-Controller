@@ -51,6 +51,9 @@ static unsigned int Current_Pixel=0;
     { "u", CMD_UnBlank, "Unblank the display." },
     { "sp", CMD_SetPixel, "Set Current Pixel." },
     { "wp", CMD_WritePixel, "Write Current Pixel and Increment Pointer." },
+    { "a", CMD_Animate, "Animate Splash Image." },
+    { "n", CMD_Normal, "Set colors normal." },
+    { "i", CMD_Invert, "Set colors inverted." },
     { "x", CMD_Exit, "Exit MainLoop." },
     { "h", CMD_Help, "Application help." },
     {0,0,0}
@@ -155,20 +158,92 @@ CMD_SetPixel (int argc, char **argv)
 
 //*****************************************************************************
 //
-// Command: SetPixel
+// Command: WritePixel
 //
-// set Current_Pixel to a new postion on Screen
+// write data at Current_Pixel and increment Current_Pixel
 //
 //*****************************************************************************
 
 int
 CMD_WritePixel (int argc, char **argv)
 {
-  *(g_ucBufBase+Current_Pixel)=atoi(argv[1]);
+  int pv=0;
+  pv=atoi(argv[1]);
+  *(g_ucBufBase+Current_Pixel)=pv;
+  UARTprintf("%i\n",pv);
   Current_Pixel++;
   if (Current_Pixel> OFFSCREEN_BUF_SIZE-5){
     Current_Pixel=0;
   }
+  return (0);
+}
+
+//*****************************************************************************
+//
+// Command: Animate
+//
+// Animate the splash screen @10Hz
+//
+//*****************************************************************************
+
+int
+CMD_Animate (int argc, char **argv)
+{
+  int Xoff=-240;
+  int Yoff=-240;
+  unsigned long ulPrevSeconds;
+  int i;
+  int freq=10;
+  if (argc >1){
+    freq=atoi(argv[1]);
+  }
+  UARTprintf("%i\n",freq);
+  GrImageDraw(&sDisplayContext, g_pucBlank,0,0);
+  for (i=0;i<120;i++){
+    
+    //UARTprintf("%i\n",i);
+    GrImageDraw(&sDisplayContext, g_pucSplash,Xoff,Yoff);
+    Xoff+=2;
+    Yoff+=2;
+    ROM_SysCtlDelay(80000000/3/freq);
+  }
+  return (0);
+}
+
+//*****************************************************************************
+//
+// Command: Normal
+//
+// Set Normal Colors (white on Black)
+//
+//*****************************************************************************
+
+int
+CMD_Normal (int argc, char **argv)
+{
+  // Set colors for display - White = on, Black = off
+    GrContextForegroundSet(&sDisplayContext,ClrWhite);
+    GrContextBackgroundSet(&sDisplayContext,ClrBlack);
+    
+  return (0);
+}
+
+
+//*****************************************************************************
+//
+// Command: Invert
+//
+// Set Inverted Colors (Black on White)
+//
+//*****************************************************************************
+
+int
+CMD_Invert (int argc, char **argv)
+{
+  // Set colors for display - White = on, Black = off
+    GrContextForegroundSet(&sDisplayContext,ClrBlack);
+    GrContextBackgroundSet(&sDisplayContext,ClrWhite);
+    
   return (0);
 }
 

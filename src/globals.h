@@ -43,3 +43,5 @@ extern unsigned char g_ucExit; // Exit flag, used to exit main loop
 extern tDisplay g_sOffscreenDisplayA; // Display buffer
 
 extern tContext sDisplayContext; // Acitive Display Context
+
+extern unsigned long g_ulSeconds; //seconds since start

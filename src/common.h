@@ -52,6 +52,7 @@
 #include "utils/ustdlib.h"
 #include "utils/cmdline.h"
 #include "string.h"
+#include "stdlib.h"
 
 // Setup 128 char UART Buffer
 #define UART_RX_BUFFER_SIZE     128

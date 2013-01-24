@@ -84,7 +84,7 @@ static unsigned long g_ulCPUUsage;
 // maintained by the SysTick interrupt handler.
 //
 //*****************************************************************************
-static unsigned long g_ulSeconds = 0;
+unsigned long g_ulSeconds = 0;
 
 // Dummy buffer for Rx from SSI
 unsigned short g_uiSsiRxBuf[SSI_RXBUF_SIZE];
