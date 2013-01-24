@@ -200,10 +200,9 @@ InitSSI2Transfer(void)
  
     GPIOPinConfigure(GPIO_PB4_SSI2CLK);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_3, GPIO_PIN_3); // Turn on pin E3
-    GPIOPinConfigure(GPIO_PB5_SSI2FSS);
     GPIOPinConfigure(GPIO_PB6_SSI2RX);
     GPIOPinConfigure(GPIO_PB7_SSI2TX);
-    GPIOPinTypeSSI(GPIO_PORTB_BASE, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+    GPIOPinTypeSSI(GPIO_PORTB_BASE, GPIO_PIN_4|GPIO_PIN_6|GPIO_PIN_7);
 
     //
     // Setup the SSI communication parameters.
