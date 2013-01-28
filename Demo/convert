@@ -1,0 +1,7 @@
+#! /bin/bash
+FILES="$@"
+for f in $FILES 
+do
+    ~/.wine/drive_c/StellarisWare_Lp/tools/pnmtoc/pnmtoc ${f}> ${f%.ppm}.c
+done
+

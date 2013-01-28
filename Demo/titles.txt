@@ -1,0 +1,22 @@
+Show Splash Screen 
+
+Invert Colors 
+
+Animation, 10 fps 
+
+Animation, 20 fps 
+
+Animation, 30 fps 
+
+Animation, 50 fps 
+
+Animation, 100 fps 
+
+Single screen of Text 
+
+Scrolling Text 
+
+Single screen of inverted Text 
+
+Bitmap Download
+Text on top of graphics
