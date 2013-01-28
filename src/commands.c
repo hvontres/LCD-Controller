@@ -168,12 +168,16 @@ int
 CMD_WritePixel (int argc, char **argv)
 {
   int pv=0;
-  pv=atoi(argv[1]);
-  *(g_ucBufBase+Current_Pixel)=pv;
-  UARTprintf("%i\n",pv);
-  Current_Pixel++;
-  if (Current_Pixel> OFFSCREEN_BUF_SIZE-5){
-    Current_Pixel=0;
+  int pc=0;
+  //UARTprintf("%i\n",argc);
+  for (pc=1;pc<argc;pc++) {
+    pv=atoi(argv[pc]);
+    *(g_ucBufBase+Current_Pixel)=pv;
+    //UARTprintf("%i\n",pc);
+    Current_Pixel++;
+    if (Current_Pixel> OFFSCREEN_BUF_SIZE-5){
+      Current_Pixel=0;
+    }
   }
   return (0);
 }
@@ -191,13 +195,13 @@ CMD_Animate (int argc, char **argv)
 {
   int Xoff=-240;
   int Yoff=-240;
-  unsigned long ulPrevSeconds;
+  //unsigned long ulPrevSeconds;
   int i;
   int freq=10;
   if (argc >1){
     freq=atoi(argv[1]);
   }
-  UARTprintf("%i\n",freq);
+  //UARTprintf("%i\n",freq);
   GrImageDraw(&sDisplayContext, g_pucBlank,0,0);
   for (i=0;i<120;i++){
     

@@ -72,7 +72,10 @@ CFLAGS     += -Dgcc
 CFLAGS     += -DTARGET_IS_BLIZZARD_RA1
 CFLAGS     += -fsingle-precision-constant
 CFLAGS     += -I$(SW_DIR) $(INCLUDES)
+# Set Uart0 Xfers as buffered
 CFLAGS	   += -DUART_BUFFERED
+#
+CFLAGS	   += -DCMDLINE_MAX_ARGS=51
 
 ifeq ($(FPU),hard)
 	LIBGCC  = $(TOOL)/lib/gcc/arm-none-eabi/4.6.2/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libgcc.a

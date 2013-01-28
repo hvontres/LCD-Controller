@@ -55,7 +55,7 @@
 #include "stdlib.h"
 
 // Setup 128 char UART Buffer
-#define UART_RX_BUFFER_SIZE     128
+#define UART_RX_BUFFER_SIZE     256
 
 //define Screen Geometry
 #define PIXEL_COLS 320

@@ -28,7 +28,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 //*****************************************************************************
 
-#define CMDLINE_MAX_ARGS 3
+#define CMDLINE_MAX_ARGS 8
 
 //*****************************************************************************
 //
