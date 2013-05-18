@@ -1,0 +1,304 @@
+EESchema Schematic File Version 2  date Wed 23 Jan 2013 12:18:40 AM PST
+LIBS:Custom_Parts
+LIBS:BoosterPack
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:Lcd Booster3-cache
+EELAYER 27 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 2
+Title ""
+Date "23 jan 2013"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L GND #PWR01
+U 1 1 5080AA99
+P 9150 2450
+F 0 "#PWR01" H 9150 2450 30  0001 C CNN
+F 1 "GND" H 9150 2380 30  0001 C CNN
+	1    9150 2450
+	0    1    1    0   
+$EndComp
+$Comp
+L TI_BOOSTER_40_J1 J1
+U 1 1 5080DB5C
+P 9750 1350
+F 0 "J1" H 9700 2000 60  0000 C CNN
+F 1 "TI_BOOSTER_40_J1" H 9750 700 60  0000 C CNN
+	1    9750 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L TI_BOOSTER_40_J2 J2
+U 1 1 5080DBF4
+P 9750 2900
+F 0 "J2" H 9700 3550 60  0000 C CNN
+F 1 "TI_BOOSTER_40_J2" H 9750 2250 60  0000 C CNN
+	1    9750 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L TI_BOOSTER_40_J3 J3
+U 1 1 5080DC03
+P 9750 4450
+F 0 "J3" H 9700 5100 60  0000 C CNN
+F 1 "TI_BOOSTER_40_J3" H 9750 3800 60  0000 C CNN
+	1    9750 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L TI_BOOSTER_40_J4 J4
+U 1 1 5080DC12
+P 9750 6000
+F 0 "J4" H 9700 6650 60  0000 C CNN
+F 1 "TI_BOOSTER_40_J4" H 9750 5350 60  0000 C CNN
+	1    9750 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR02
+U 1 1 5080DC79
+P 9150 4100
+F 0 "#PWR02" H 9150 4100 30  0001 C CNN
+F 1 "GND" H 9150 4030 30  0001 C CNN
+	1    9150 4100
+	0    1    1    0   
+$EndComp
+$Comp
+L +5V #PWR03
+U 1 1 5080DC8B
+P 9150 4000
+F 0 "#PWR03" H 9150 4090 20  0001 C CNN
+F 1 "+5V" H 9150 4090 30  0000 C CNN
+	1    9150 4000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L +3.3V #PWR04
+U 1 1 5097634B
+P 9150 900
+F 0 "#PWR04" H 9150 860 30  0001 C CNN
+F 1 "+3.3V" H 9150 1010 30  0000 C CNN
+	1    9150 900 
+	0    -1   -1   0   
+$EndComp
+$Sheet
+S 2400 1500 800  750 
+U 50974D28
+F0 "LcdDriver" 50
+F1 "LcdDriver2.sch" 50
+F2 "Reset" I R 3200 1700 60 
+F3 "Blank" I R 3200 1800 60 
+F4 "SDI" I R 3200 1900 60 
+F5 "SDO" O R 3200 2000 60 
+F6 "SCLK" O R 3200 2100 60 
+$EndSheet
+$Comp
+L CONN_4X2 P_SDI1
+U 1 1 50E137D7
+P 5450 2450
+F 0 "P_SDI1" H 5450 2700 50  0000 C CNN
+F 1 "MISO" V 5450 2450 40  0000 C CNN
+	1    5450 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_4X2 P_SDO1
+U 1 1 50E137F8
+P 5450 3300
+F 0 "P_SDO1" H 5450 3550 50  0000 C CNN
+F 1 "MOSI" V 5450 3300 40  0000 C CNN
+	1    5450 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_4X2 P_SCLK1
+U 1 1 50E1382B
+P 5450 4050
+F 0 "P_SCLK1" H 5450 4300 50  0000 C CNN
+F 1 "SCLK" V 5450 4050 40  0000 C CNN
+	1    5450 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8800 1500 8800 4100
+Wire Wire Line
+	8800 1500 9150 1500
+Wire Wire Line
+	9150 1400 8550 1400
+Wire Wire Line
+	8550 1400 8550 1800
+Wire Wire Line
+	8550 1800 3200 1800
+Wire Wire Line
+	9150 1300 8300 1300
+Wire Wire Line
+	8300 1300 8300 1700
+Wire Wire Line
+	8300 1700 3200 1700
+Wire Wire Line
+	6350 3050 9150 3050
+Wire Wire Line
+	5050 1900 5050 2600
+Connection ~ 5050 2400
+Connection ~ 5050 2500
+Wire Wire Line
+	5050 3900 5050 4200
+Connection ~ 5050 4000
+Connection ~ 5050 4100
+Wire Wire Line
+	5050 3150 5050 3450
+Connection ~ 5050 3350
+Connection ~ 5050 3250
+Wire Wire Line
+	6150 2950 9150 2950
+Wire Wire Line
+	5050 1900 3200 1900
+Connection ~ 5050 2300
+Wire Wire Line
+	5850 3350 6350 3350
+Wire Wire Line
+	6350 3350 6350 3050
+Wire Wire Line
+	5850 2500 6150 2500
+Wire Wire Line
+	6150 2500 6150 2950
+Wire Wire Line
+	3200 2000 4800 2000
+Wire Wire Line
+	4800 2000 4800 3150
+Wire Wire Line
+	4800 3150 5050 3150
+Wire Wire Line
+	3200 2100 4650 2100
+Wire Wire Line
+	4650 2100 4650 3900
+Wire Wire Line
+	4650 3900 5050 3900
+Wire Wire Line
+	8800 4100 5850 4100
+Wire Wire Line
+	9150 1600 5850 1600
+Wire Wire Line
+	5850 1600 5850 2300
+Text Label 8950 2950 0    60   ~ 0
+SSI2TX
+Text Label 8950 3050 0    60   ~ 0
+SSI2RX
+Text Label 8900 1600 0    60   ~ 0
+SSI0Tx
+Text Label 8900 1500 0    60   ~ 0
+SSI2Clk
+Wire Wire Line
+	5850 3250 8400 3250
+Wire Wire Line
+	8400 3250 8400 2750
+Wire Wire Line
+	8400 2750 9150 2750
+Text Label 8950 2750 0    60   ~ 0
+SSI1Rx
+Wire Wire Line
+	5850 3150 9150 3150
+Text Label 8950 3150 0    60   ~ 0
+SSI0Rx
+Wire Wire Line
+	5850 3900 8650 3900
+Wire Wire Line
+	8650 3900 8650 3350
+Wire Wire Line
+	8650 3350 9150 3350
+Text Label 8950 3350 0    60   ~ 0
+SSI0Clk
+Wire Wire Line
+	9150 4200 5850 4200
+Text Label 8950 4200 0    60   ~ 0
+SSI3Clk
+Wire Wire Line
+	9150 4400 6350 4400
+Wire Wire Line
+	6350 4400 6350 3450
+Wire Wire Line
+	6350 3450 5850 3450
+Text Label 8950 4400 0    60   ~ 0
+SSI3Rx
+Wire Wire Line
+	9150 4500 6050 4500
+Wire Wire Line
+	6050 4500 6050 2600
+Wire Wire Line
+	6050 2600 5850 2600
+Text Label 8950 4500 0    60   ~ 0
+SSI3Tx
+Text Label 9000 4900 0    60   ~ 0
+SSI1Tx
+Text Label 9000 5550 0    60   ~ 0
+SSI1Clk
+Wire Wire Line
+	9150 5550 5950 5550
+Wire Wire Line
+	5950 5550 5950 4000
+Wire Wire Line
+	5950 4000 5850 4000
+Wire Wire Line
+	9150 4900 6700 4900
+Wire Wire Line
+	6700 4900 6700 2400
+Wire Wire Line
+	6700 2400 5850 2400
+$Comp
+L CONN_1 M1
+U 1 1 50E369A4
+P 5400 1000
+F 0 "M1" H 5480 1000 40  0000 L CNN
+F 1 "CONN_1" H 5400 1055 30  0001 C CNN
+	1    5400 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_1 M2
+U 1 1 50E36A1F
+P 5400 1150
+F 0 "M2" H 5480 1150 40  0000 L CNN
+F 1 "CONN_1" H 5400 1205 30  0001 C CNN
+	1    5400 1150
+	1    0    0    -1  
+$EndComp
+NoConn ~ 5250 1000
+NoConn ~ 5250 1150
+$EndSCHEMATC
