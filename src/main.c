@@ -259,18 +259,15 @@ main(void)
     GrContextFontSet(&sDisplayContext,&g_sFontFixed6x8);
     CMD_Splash(0,0); //Display Splash Screen
     
-    //Set BLANK HIGH and reset MSP430
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, GPIO_PIN_5);
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, GPIO_PIN_4);
-    
-    //
-    // Initialize the uDMA SSI transfers.
-    //
-    InitSSI2Transfer();
-    
 
-    // Release Blank Pin
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+
+    // Allow Caps to charge and reset display to prevent contrast issues
+    CMD_UnBlank(0,0); //Unblank Display
+    SysCtlDelay(SysCtlClockGet()/30); // 0.1s Delay
+    CMD_Blank(0,0);// Blank Display
+    SysCtlDelay(SysCtlClockGet()/4);//  0.75s Delay
+    CMD_UnBlank(0,0);//Unblank Display
+    
     
     On=1;
     //
