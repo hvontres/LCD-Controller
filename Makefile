@@ -25,7 +25,7 @@ SOURCES	   += cmdline.c
 INCLUDES    = -Isrc/include
 
 # Path to the root of your ARM toolchain
-TOOL        = /home/henry/sat
+TOOL        = /usr
 
 # Path to the root of your StellarisWare folder
 SW_DIR      = /home/henry/.wine/drive_c/StellarisWare_Lp
@@ -83,9 +83,9 @@ ifeq ($(FPU),hard)
 	LIBC    = $(TOOL)/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16/libc.a
 	DRIVER_LIB	= $(SW_DIR)/driverlib/gcc-cm4f-hard/libdriver-cm4f-hard.a
 else
-	LIBGCC  = $(TOOL)/lib/gcc/arm-none-eabi/4.6.2/thumb/cortex-m4/libgcc.a
-	LIBM    = $(TOOL)/arm-none-eabi/lib/thumb/cortex-m4/libm.a
-	LIBC    = $(TOOL)/arm-none-eabi/lib/thumb/cortex-m4/libc.a
+	LIBGCC  = $(TOOL)/lib/gcc/arm-none-eabi/4.7.4/thumb/libgcc.a
+	LIBM    = $(TOOL)/arm-none-eabi/lib/thumb/libm.a
+	LIBC    = $(TOOL)/arm-none-eabi/lib/thumb/libc.a
 	DRIVER_LIB	= $(SW_DIR)/driverlib/gcc-cm4f/libdriver-cm4f.a
 endif
 

@@ -24,7 +24,8 @@ for the MSP430.
 
 1) get gcc toolchain:
 https://github.com/esden/summon-arm-toolchain
-
+or
+https://launchpad.net/gcc-arm-embedded
 2) get naken_asm:
 http://downloads.mikekohn.net/naken_asm/naken_asm-2012-09-02.tar.gz
 make sure that naken_asm is on your path, or make won't find it.
