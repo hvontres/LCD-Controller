@@ -18,6 +18,8 @@ The SPI connection is set up to transfer 16 bits at a time, allowing for 4 pixel
 updates for each transfer. With the SPI clock running at 8Mhz, the display can 
 update at ~51 Hz.
 
+Video Demo here :http://www.youtube.com/watch?v=h1OtnWywmYI
+
 
 This project has been built on linux using gcc for the Stellaris and naken_asm
 for the MSP430.
